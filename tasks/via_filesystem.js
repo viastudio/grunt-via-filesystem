@@ -8,6 +8,7 @@
 module.exports = function(grunt) {
 
     var fs = require('fs');
+    var path = require('path');
     var viaEnvironment = require('via-environment');
 
     /**
@@ -19,14 +20,17 @@ module.exports = function(grunt) {
      */
     function createSymbolicLink(srcPath, destPath) {
 
-        if (!grunt.file.exists(srcPath) && !grunt.file.isLink(srcPath)) {
+        var srcAbsolutePath = path.resolve(process.cwd(), srcPath);
+        var destAbsolutePath = path.resolve(process.cwd(), destPath);
+
+        if (!grunt.file.exists(srcAbsolutePath) && !grunt.file.isLink(srcAbsolutePath)) {
             grunt.log.error().error('Symbolic link source directory does not exist: ' + srcPath.red);
             return;
         }
 
         if (!grunt.file.exists(destPath)) {
-            grunt.log.write(srcPath.cyan + ' -> ' + destPath.cyan + '... ');
-            fs.symlinkSync(srcPath, destPath);
+            grunt.log.write(destPath.cyan + ' -> ' + srcPath.cyan + '... ');
+            fs.symlinkSync(srcAbsolutePath, destAbsolutePath);
             grunt.log.ok();
         } else {
             grunt.log.writeln('Destination path already exists: ' + destPath.cyan);
@@ -62,7 +66,9 @@ module.exports = function(grunt) {
     grunt.registerTask('via_filesystem', 'Grunt plugin for setting up a project filesystem at Via Studio.', function() {
 
         //detect environment
-        var env = viaEnvironment.getEnvironment();
+        var env = (typeof grunt.forceEnvironment === 'undefined') ? viaEnvironment.getEnvironment() : grunt.forceEnvironment;
+
+        console.log(env);
 
         //setup config
         var defaultConfig = grunt.config.get('via_filesystem').default;
