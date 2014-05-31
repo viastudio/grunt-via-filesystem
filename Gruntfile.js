@@ -1,62 +1,60 @@
 /*
  * grunt-via-filesystem
- * 
  *
- * Copyright (c) 2014 Via Studio
- * Licensed under the MIT license.
  */
 
 'use strict';
 
 module.exports = function (grunt) {
-  // load all npm grunt tasks
-  require('load-grunt-tasks')(grunt);
 
-  // Project configuration.
-  grunt.initConfig({
-    jshint: {
-      all: [
-        'Gruntfile.js',
-        'tasks/*.js',
-        '<%= nodeunit.tests %>'
-      ],
-      options: {
-        jshintrc: '.jshintrc',
-        reporter: require('jshint-stylish')
-      }
-    },
+    // load all npm grunt tasks
+    require('load-grunt-tasks')(grunt);
 
-    // Before generating any new files, remove any previously-created files.
-    clean: {
-      tests: ['tmp']
-    },
-
-    // Configuration to be run (and then tested).
-    via_filesystem: {
-      default_options: {
-        options: {
+    // Project configuration.
+    grunt.initConfig({
+        jshint: {
+            all: [
+                'Gruntfile.js',
+                'tasks/*.js',
+                '<%= nodeunit.tests %>'
+            ],
+            options: {
+                jshintrc: '.jshintrc',
+                reporter: require('jshint-stylish')
+            }
         },
-        files: {
-          'tmp/default_options': ['test/fixtures/testing', 'test/fixtures/123']
-        }
-      },
-      custom_options: {
-        options: {
-          separator: ': ',
-          punctuation: ' !!!'
+
+        // Before generating any new files, remove any previously-created files.
+        clean: {
+            tests: ['tmp']
         },
-        files: {
-          'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123']
+
+        // Configuration to be run (and then tested).
+        via_filesystem: {
+            default_options: {
+                options: {
+                },
+                files: {
+                    'tmp/default_options': ['test/fixtures/testing', 'test/fixtures/123']
+                }
+            },
+            custom_options: {
+                options: {
+                    separator: ': ',
+                    punctuation: ' !!!'
+                },
+                files: {
+                    'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123']
+                }
+            }
+        },
+
+        // Unit tests.
+        nodeunit: {
+            tests: ['test/*_test.js']
         }
-      }
-    },
 
-    // Unit tests.
-    nodeunit: {
-      tests: ['test/*_test.js']
-    }
-
-  });
+    });
 
   // Actually load this plugin's task(s).
   grunt.loadTasks('tasks');
