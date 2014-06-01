@@ -1,14 +1,16 @@
 # grunt-via-filesystem
 
-> Grunt plugin for setting up a project filesystem at Via Studio.
+> Grunt plugin for setting up temp directories and symlinks based on environment.
 
-## Getting Started
-This plugin requires Grunt.
+## Installation
 
-If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out the [Getting Started](http://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](http://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
+In your `package.json` file, add this plugin as a dependency.
 
-```shell
-npm install grunt-via-filesystem --save-dev
+```javascript
+
+"dependencies": {
+    "grunt-via-filesystem": "git+ssh://git@github.com:viastudio/grunt-via-filesystem.git"
+}
 ```
 
 Once the plugin has been installed, it may be enabled inside your Gruntfile with this line of JavaScript:
@@ -19,74 +21,44 @@ grunt.loadNpmTasks('grunt-via-filesystem');
 
 ## The "via_filesystem" task
 
-### Overview
+### Usage
 In your project's Gruntfile, add a section named `via_filesystem` to the data object passed into `grunt.initConfig()`.
 
-```js
-grunt.initConfig({
-  via_filesystem: {
-    options: {
-      // Task-specific options go here.
-    },
-    your_target: {
-      // Target-specific file lists and/or options go here.
-    },
-  },
-})
-```
+You may define symlinks and directories per environment or set defaults for all environments.  A typical setup is below where the `tmp` and `uploads` directories are created on every environment, but the uploads folder on dev is using a shared symlink.
 
-### Options
-
-#### options.separator
-Type: `String`
-Default value: `',  '`
-
-A string value that is used to do something with whatever.
-
-#### options.punctuation
-Type: `String`
-Default value: `'.'`
-
-A string value that is used to do something else with whatever else.
-
-### Usage Examples
-
-#### Default Options
-In this example, the default options are used to do something with whatever. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result would be `Testing, 1 2 3.`
+Symlinks are created first. So, in this example a symlink for the uploads directory would be created first and therefore the directory creation for the `uploads` dir will be skipped in the `dev` environment.
 
 ```js
 grunt.initConfig({
+
   via_filesystem: {
-    options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
+    default: {
+      symLinks: [],
+      dirs: [
+        {
+            path: 'cakephp/app/uploads',
+            permissions: '0777'
+        },
+        {
+            path: 'cakephp/app/tmp',
+            permissions: '0777'
+        },
+      ]
     },
-  },
-})
+    dev: {
+      symLinks: [
+        {
+          src: '/var/www/<%= pkg.domain %>/cakephp/app/uploads',
+          dest: 'cakephp/app/uploads'
+        },
+      ],
+      },
+      stage: {
+      },
+      prod: {
+      }
+  }
+
+});
 ```
 
-#### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
-
-```js
-grunt.initConfig({
-  via_filesystem: {
-    options: {
-      separator: ': ',
-      punctuation: ' !!!',
-    },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
-})
-```
-
-## Contributing
-In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
-
-## Release History
-_(Nothing yet)_
-
-## License
-Copyright (c) 2014 Via Studio. Licensed under the MIT license.
