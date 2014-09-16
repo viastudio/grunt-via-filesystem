@@ -56,11 +56,17 @@ module.exports = function(grunt) {
         }
 
         if (permissions !== undefined) {
-            grunt.log.write('Setting permissions (' + permissions.cyan + '): ' + path.cyan + '... ');
-            fs.chmodSync(path, permissions);
-            grunt.log.ok();
-        }
+            var fileStats = fs.statSync(path);
+            var processUID = process.getuid();
 
+            if (processUID != fileStats.uid) {
+                grunt.log.writeln("Current user (uid: " + processUID.toString().cyan + ") is not the owner of '" + path.cyan + "' (uid: " + fileStats.uid.toString().cyan + "). Skipping chmod." );
+            } else {
+                grunt.log.write('Setting permissions (' + permissions.cyan + '): ' + path.cyan + '... ');
+                fs.chmodSync(path, permissions);
+                grunt.log.ok();
+            }
+        }
     }
 
     grunt.registerTask('via_filesystem', 'Grunt plugin for setting up a project filesystem at Via Studio.', function() {
