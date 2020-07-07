@@ -1,6 +1,6 @@
 {
     "name": "grunt-via-filesystem",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "Grunt plugin for setting up a project filesystem at Via Studio.",
     "repository": "git@github.com:viastudio/grunt-via-filesystem.git",
     "author": {

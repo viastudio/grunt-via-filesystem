@@ -19,18 +19,14 @@ module.exports = function(grunt) {
      * @returns {null}
      */
     function createSymbolicLink(srcPath, destPath) {
-
-        var srcAbsolutePath = path.resolve(process.cwd(), srcPath);
-        var destAbsolutePath = path.resolve(process.cwd(), destPath);
-
-        if (!grunt.file.exists(srcAbsolutePath) && !grunt.file.isLink(srcAbsolutePath)) {
+        if (!grunt.file.exists(srcPath) && !grunt.file.isLink(srcPath)) {
             grunt.log.error().error('Symbolic link source directory does not exist: ' + srcPath.red);
             return;
         }
 
         if (!grunt.file.exists(destPath)) {
             grunt.log.write(destPath.cyan + ' -> ' + srcPath.cyan + '... ');
-            fs.symlinkSync(srcAbsolutePath, destAbsolutePath);
+            fs.symlinkSync(srcPath, destPath);
             grunt.log.ok();
         } else {
             grunt.log.writeln('Destination path already exists: ' + destPath.cyan);
